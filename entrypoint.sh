@@ -8,7 +8,7 @@ err() {
 }
 trap 'err $LINENO' ERR
 
-INOTIFY_EVENTS_DEFAULT="create,modify,move"
+INOTIFY_EVENTS_DEFAULT="create"
 INOTIFY_OPTONS_DEFAULT='--recursive --monitor'
 
 echo "inotify settings"
