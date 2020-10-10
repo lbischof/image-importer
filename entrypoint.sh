@@ -23,7 +23,6 @@ echo
 echo "[Starting inotifywait...]"
 inotifywait -e ${INOTIFY_EVENTS} ${INOTIFY_OPTONS} "${SOURCE}" | \
     while read -r notifies; do
-        echo "notify received"
         echo "$notifies"
-        echo exiftool -o . '-Directory<CreateDate' -d ${DESTINATION}/%Y -r ${SOURCE}
+        exiftool '-Directory<CreateDate' -d ${DESTINATION}/%Y -r ${SOURCE}
     done
