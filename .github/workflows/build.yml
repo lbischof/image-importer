@@ -39,6 +39,12 @@ jobs:
             --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') \
             --build-arg VCS_REF=${GITHUB_SHA::8} \
             ${TAGS} --file Dockerfile .
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+        with:
+          platforms: ${DOCKER_PLATFORMS}
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
