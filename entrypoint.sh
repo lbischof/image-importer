@@ -9,7 +9,7 @@ err() {
 trap 'err $LINENO' ERR
 
 INOTIFY_EVENTS_DEFAULT="create,modify,move"
-INOTIFY_OPTONS_DEFAULT='--monitor'
+INOTIFY_OPTONS_DEFAULT='--recursive --monitor'
 
 echo "inotify settings"
 echo "================"
@@ -24,5 +24,6 @@ echo "[Starting inotifywait...]"
 inotifywait -e ${INOTIFY_EVENTS} ${INOTIFY_OPTONS} "${SOURCE}" | \
     while read -r notifies; do
         echo "$notifies"
-        exiftool '-Directory<CreateDate' -d ${DESTINATION}/%Y -r ${SOURCE}
+        # Fallback to GPSDateTime if DateTimeOriginal is not set
+        exiftool '-Directory<GPSDateTime' '-Directory<DateTimeOriginal' -d ${DESTINATION}/%Y -r ${SOURCE} || true
     done
