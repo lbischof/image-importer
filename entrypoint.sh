@@ -18,7 +18,8 @@ echo
 FDUPES_ARGS=""
 # Always delete source instead of destination
 # Fdupes sorts by name and keeps the first entry
-if [[ "${SOURCE}" > "${DESTINATION}" ]]; then
+# Destination must be first (smaller)
+if [[ "${SOURCE}" < "${DESTINATION}" ]]; then
     FDUPES_ARGS="--reverse"
 fi
 
