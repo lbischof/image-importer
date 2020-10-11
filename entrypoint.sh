@@ -15,6 +15,13 @@ echo "  Source:           ${SOURCE}"
 echo "  Destination:      ${DESTINATION}"
 echo
 
+FDUPES_ARGS=""
+# Always delete source instead of destination
+# Fdupes sorts by name and keeps the first entry
+if [[ "${SOURCE}" > "${DESTINATION}" ]]; then
+    FDUPES_ARGS="--reverse"
+fi
+
 echo "[Starting inotifywait...]"
 last_run=0
 inotifywait -e create --recursive --monitor --format '%T' --timefmt '%s' "${SOURCE}" | \
@@ -23,7 +30,7 @@ inotifywait -e create --recursive --monitor --format '%T' --timefmt '%s' "${SOUR
             sleep 1
             last_run=$(date +%s)
             echo "[Found new file at $(date)]"
-            fdupes --recurse --delete --noprompt ${SOURCE} ${DESTINATION}
+            fdupes --recurse --delete --noprompt ${FDUPES_ARGS} ${SOURCE} ${DESTINATION}
             # Fallback to GPSDateTime if DateTimeOriginal is not set
             exiftool '-Directory<GPSDateTime' '-Directory<DateTimeOriginal' -d ${DESTINATION}/%Y -r ${SOURCE} || true
         fi
