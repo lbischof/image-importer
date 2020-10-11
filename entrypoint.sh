@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -Eeuo pipefail
+set -Exeuo pipefail
 
 err() {
     echo "Error occurred:"
