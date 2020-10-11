@@ -16,6 +16,7 @@ echo "  Destination:      ${DESTINATION}"
 echo
 
 echo "[Starting inotifywait...]"
+last_run=0
 inotifywait -e create --recursive --monitor --format '%T' --timefmt '%s' "${SOURCE}" | \
     while read timestamp; do
         if test $timestamp -ge $last_run; then
