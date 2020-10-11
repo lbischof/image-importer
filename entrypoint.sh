@@ -25,8 +25,9 @@ fi
 
 echo "[Starting inotifywait...]"
 last_run=0
-inotifywait -e create --recursive --monitor --format '%T' --timefmt '%s' "${SOURCE}" | \
-    while read timestamp; do
+inotifywait -e create --recursive --monitor --format '%w %T' --timefmt '%s' "${SOURCE}" | \
+    while read filename timestamp; do
+        echo $filename
         if test $timestamp -ge $last_run; then
             sleep 1
             last_run=$(date +%s)
@@ -36,6 +37,7 @@ inotifywait -e create --recursive --monitor --format '%T' --timefmt '%s' "${SOUR
             # Fallback to GPSDateTime if DateTimeOriginal is not set
             # '-keywords<${directory;s#consume_test/##;$_ = undef if /^regex/}'
             # conditions: https://exiftool.org/forum/index.php?topic=3411.0
+            # keywords from filename: https://exiftool.org/forum/index.php?topic=8454.0
             exiftool '-Directory<GPSDateTime' '-Directory<DateTimeOriginal' "-artist<\${directory;s#${SOURCE%/}/?##;$_=undef if /^$/}" -d ${DESTINATION}/%Y -r ${SOURCE} || true
         fi
     done
