@@ -32,7 +32,10 @@ inotifywait -e create --recursive --monitor --format '%T' --timefmt '%s' "${SOUR
             last_run=$(date +%s)
             echo "[Found new file at $(date)]"
             fdupes --recurse --delete --noprompt --order=name ${FDUPES_ARGS} ${SOURCE} ${DESTINATION}
+
             # Fallback to GPSDateTime if DateTimeOriginal is not set
-            exiftool '-Directory<GPSDateTime' '-Directory<DateTimeOriginal' -d ${DESTINATION}/%Y -r ${SOURCE} || true
+            # '-keywords<${directory;s#consume_test/##;$_ = undef if /^regex/}'
+            # conditions: https://exiftool.org/forum/index.php?topic=3411.0
+            exiftool '-Directory<GPSDateTime' '-Directory<DateTimeOriginal' "-artist<\${directory;s/${SOURCE}\/?//;$_=undef if /^$/}" -d ${DESTINATION}/%Y -r ${SOURCE} || true
         fi
     done
