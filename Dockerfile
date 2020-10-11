@@ -2,7 +2,7 @@ FROM alpine
 
 WORKDIR /app
 
-RUN apk add --no-cache bash exiftool inotify-tools
+RUN apk add --no-cache bash exiftool inotify-tools fdupes
 
 COPY entrypoint.sh .
 

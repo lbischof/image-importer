@@ -22,6 +22,8 @@ inotifywait -e create --recursive --monitor --format '%T' --timefmt '%s' "${SOUR
         if test $timestamp -ge $last_run; then
             sleep 1
             last_run=$(date +%s)
+            echo "[Found new file at $(date)]"
+            fdupes --recurse --delete --noprompt ${SOURCE} ${DESTINATION}
             # Fallback to GPSDateTime if DateTimeOriginal is not set
             exiftool '-Directory<GPSDateTime' '-Directory<DateTimeOriginal' -d ${DESTINATION}/%Y -r ${SOURCE} || true
         fi
