@@ -38,6 +38,11 @@ inotifywait -e create -e moved_to --recursive --monitor --format '%w|%f|%T|%e' -
             # '-keywords<${directory;s#consume_test/##;$_ = undef if /^regex/}'
             # conditions: https://exiftool.org/forum/index.php?topic=3411.0
             # keywords from filename: https://exiftool.org/forum/index.php?topic=8454.0
-            exiftool '-Directory<GPSDateTime' '-Directory<DateTimeOriginal' "-artist<\${directory;s#${SOURCE%/}/?##;\$_=undef if not /^[A-Z][a-z]+ [A-Z][a-z]+$/}" -d ${DESTINATION}/%Y -overwrite_original -r ${SOURCE} || true
+
+            # Fallback to GPSDateTime if DateTimeOriginal is not set
+            # Set artist if the directory (without source) looks like a name. In my testing "undef" did not overwrite an already existing artist
+            exiftool '-Directory<GPSDateTime' '-Directory<DateTimeOriginal' \
+                "-artist<\${directory;s#${SOURCE%/}/?##;\$_=undef if not /^[A-Z][a-z]+ [A-Z][a-z]+$/}" \
+                -d ${DESTINATION}/%Y -overwrite_original -r ${SOURCE} || true
         fi
     done
