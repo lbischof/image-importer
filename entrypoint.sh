@@ -25,9 +25,9 @@ fi
 
 echo "[Starting inotifywait...]"
 last_run=0
-inotifywait -e create --recursive --monitor --format '%w|%T' --timefmt '%s' "${SOURCE}" | \
-    while IFS='|' read filename timestamp; do
-        echo $filename
+inotifywait -e create --recursive --monitor --format '%w|%f|%T|%e' --timefmt '%s' "${SOURCE}" | \
+    while IFS='|' read directory filename timestamp event; do
+        echo directory: $directory filename: $filename timestamp: $timestamp event: $event
         if test $timestamp -ge $last_run; then
             sleep 1
             last_run=$(date +%s)
