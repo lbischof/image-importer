@@ -25,7 +25,7 @@ fi
 
 echo "[Starting inotifywait...]"
 last_run=0
-inotifywait -e create --recursive --monitor --format '%w|%f|%T|%e' --timefmt --exclude '(tacitpart|_exiftool_tmp)$' '%s' "${SOURCE}" | \
+inotifywait -e create --recursive --monitor --format '%w|%f|%T|%e' --timefmt '%s' --exclude '(tacitpart|_exiftool_tmp)$' "${SOURCE}" | \
     while IFS='|' read directory filename timestamp event; do
         echo directory: $directory filename: $filename timestamp: $timestamp event: $event
         if test $timestamp -ge $last_run; then
