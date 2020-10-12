@@ -38,6 +38,6 @@ inotifywait -e create --recursive --monitor --format '%w|%f|%T|%e' --timefmt '%s
             # '-keywords<${directory;s#consume_test/##;$_ = undef if /^regex/}'
             # conditions: https://exiftool.org/forum/index.php?topic=3411.0
             # keywords from filename: https://exiftool.org/forum/index.php?topic=8454.0
-            exiftool '-Directory<GPSDateTime' '-Directory<DateTimeOriginal' "-artist<\${directory;s#${SOURCE%/}/?##;$_=undef if /^$/}" -d ${DESTINATION}/%Y -r ${SOURCE} || true
+            exiftool '-Directory<GPSDateTime' '-Directory<DateTimeOriginal' "-artist<\${directory;s#${SOURCE%/}/?##;$_=undef if /^$/}" -d ${DESTINATION}/%Y -overwrite_original -r ${SOURCE} || true
         fi
     done
