@@ -25,7 +25,7 @@ fi
 
 echo "[Starting inotifywait...]"
 last_run=0
-inotifywait -e create --recursive --monitor --format '%w|%f|%T|%e' --timefmt '%s' --exclude '(tacitpart|_exiftool_tmp)$' "${SOURCE}" | \
+inotifywait -e create -e moved_to --recursive --monitor --format '%w|%f|%T|%e' --timefmt '%s' --exclude '(tacitpart|_exiftool_tmp)$' "${SOURCE}" | \
     while IFS='|' read directory filename timestamp event; do
         echo directory: $directory filename: $filename timestamp: $timestamp event: $event
         if test $timestamp -ge $last_run; then
@@ -38,6 +38,6 @@ inotifywait -e create --recursive --monitor --format '%w|%f|%T|%e' --timefmt '%s
             # '-keywords<${directory;s#consume_test/##;$_ = undef if /^regex/}'
             # conditions: https://exiftool.org/forum/index.php?topic=3411.0
             # keywords from filename: https://exiftool.org/forum/index.php?topic=8454.0
-            exiftool '-Directory<GPSDateTime' '-Directory<DateTimeOriginal' "-artist<\${directory;s#${SOURCE%/}/?##;$_=undef if not /^[A-Z][a-z]+ [A-Z][a-z]+$/}" -d ${DESTINATION}/%Y -overwrite_original -r ${SOURCE} || true
+            exiftool '-Directory<GPSDateTime' '-Directory<DateTimeOriginal' "-artist<\${directory;s#${SOURCE%/}/?##;\$_=undef if not /^[A-Z][a-z]+ [A-Z][a-z]+$/}" -d ${DESTINATION}/%Y -overwrite_original -r ${SOURCE} || true
         fi
     done
