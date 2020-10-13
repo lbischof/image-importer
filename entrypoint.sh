@@ -29,6 +29,7 @@ inotifywait -e create -e moved_to --recursive --monitor --format '%w%f|%T|%e' --
         echo "[Found new file at $(date)]"
         echo path: $path timestamp: $timestamp event: $event
         fdupes --recurse --delete --noprompt --order=name ${FDUPES_ARGS} ${SOURCE} ${DESTINATION}
+        face_recognition || true
 
         # Fallback to GPSDateTime if DateTimeOriginal is not set
         # '-keywords<${directory;s#consume_test/##;$_ = undef if /^regex/}'
