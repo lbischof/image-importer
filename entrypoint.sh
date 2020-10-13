@@ -24,25 +24,20 @@ if [[ "${SOURCE}" < "${DESTINATION}" ]]; then
 fi
 
 echo "[Starting inotifywait...]"
-last_run=0
 inotifywait -e create -e moved_to --recursive --monitor --format '%w|%f|%T|%e' --timefmt '%s' --exclude '(tacitpart|_exiftool_tmp)$' "${SOURCE}" | \
-    while IFS='|' read directory filename timestamp event; do
-        echo directory: $directory filename: $filename timestamp: $timestamp event: $event
-        if test $timestamp -ge $last_run; then
-            sleep 1
-            last_run=$(date +%s)
-            echo "[Found new file at $(date)]"
-            fdupes --recurse --delete --noprompt --order=name ${FDUPES_ARGS} ${SOURCE} ${DESTINATION}
+    while IFS='|' read path file timestamp event; do
+        echo path: $path file: $file timestamp: $timestamp event: $event
+        echo "[Found new file at $(date)]"
+        fdupes --recurse --delete --noprompt --order=name ${FDUPES_ARGS} ${SOURCE} ${DESTINATION}
 
-            # Fallback to GPSDateTime if DateTimeOriginal is not set
-            # '-keywords<${directory;s#consume_test/##;$_ = undef if /^regex/}'
-            # conditions: https://exiftool.org/forum/index.php?topic=3411.0
-            # keywords from filename: https://exiftool.org/forum/index.php?topic=8454.0
+        # Fallback to GPSDateTime if DateTimeOriginal is not set
+        # '-keywords<${directory;s#consume_test/##;$_ = undef if /^regex/}'
+        # conditions: https://exiftool.org/forum/index.php?topic=3411.0
+        # keywords from filename: https://exiftool.org/forum/index.php?topic=8454.0
 
-            # Fallback to GPSDateTime if DateTimeOriginal is not set
-            # Set artist if the directory (without source) looks like a name. In my testing "undef" did not overwrite an already existing artist
-            exiftool '-Directory<GPSDateTime' '-Directory<DateTimeOriginal' \
-                "-artist<\${directory;s#${SOURCE%/}/?##;\$_=undef if not /^[A-Z][a-z]+ [A-Z][a-z]+$/}" \
-                -d ${DESTINATION}/%Y -overwrite_original -r ${SOURCE} || true
-        fi
+        # Fallback to GPSDateTime if DateTimeOriginal is not set
+        # Set artist if the directory (without source) looks like a name. In my testing "undef" did not overwrite an already existing artist
+        exiftool '-Directory<GPSDateTime' '-Directory<DateTimeOriginal' \
+            "-artist<\${directory;s#${SOURCE%/}/?##;\$_=undef if not /^[A-Z][a-z]+ [A-Z][a-z]+$/}" \
+            -d ${DESTINATION}/%Y -overwrite_original -r ${SOURCE}/${path}/${file} || true
     done
