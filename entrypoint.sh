@@ -28,8 +28,14 @@ inotifywait -e create -e moved_to --recursive --monitor --format '%w%f|%T|%e' --
     while IFS='|' read path timestamp event; do
         echo "[Found new file at $(date)]"
         echo path: $path timestamp: $timestamp event: $event
+
+        # This probably won't find anything, because we add metadata when importing
         fdupes --recurse --delete --noprompt --order=name ${FDUPES_ARGS} ${SOURCE} ${DESTINATION}
-        face_recognition || true
+
+        jhead -autorot $path
+        python3 recognition.py $path | while read area; do
+            exiftool -regionlist+="$area" $path
+        done
 
         # Fallback to GPSDateTime if DateTimeOriginal is not set
         # '-keywords<${directory;s#consume_test/##;$_ = undef if /^regex/}'

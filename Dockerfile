@@ -35,13 +35,18 @@ RUN cd ~ && \
 
 WORKDIR /app
 
-COPY entrypoint.sh .
-
 RUN adduser --uid 1000 --group --system importer && \
-    chmod 700 entrypoint.sh && \
-    chown importer entrypoint.sh && \
-    pip3 install face_recognition
+    pip3 install face_recognition scikit-learn
+
+RUN apt-get install -y jhead
+
+COPY entrypoint.sh .
+COPY recognition.py .
+
+RUN chmod 700 entrypoint.sh && \
+    chown importer entrypoint.sh
 
 USER importer
+
 
 CMD ["/app/entrypoint.sh"]
