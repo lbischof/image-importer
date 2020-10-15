@@ -37,7 +37,7 @@ process_image() {
     # This ensures that the image is not left in a weird state
     cp "$path" "$TMPDIR"
     local tmp_path
-    tmp_path="$TMPDIR/$(basename $path)"
+    tmp_path="$TMPDIR/$(basename "$path")"
 
     jhead -autorot "$tmp_path"
     python3 recognition.py "$tmp_path" | while read area; do
