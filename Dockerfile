@@ -21,5 +21,4 @@ RUN chmod 700 entrypoint.sh && \
 
 USER importer
 
-
-CMD ["/app/entrypoint.sh"]
+ENTRYPOINT ["/app/entrypoint.sh"]
