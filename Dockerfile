@@ -4,14 +4,12 @@ RUN apt-get install -y --fix-missing \
     exiftool \
     inotify-tools \
     fdupes \
+    jhead \
     && apt-get clean && rm -rf /tmp/* /var/tmp/*
 
 WORKDIR /app
 
-RUN adduser --uid 1000 --group --system importer && \
-    pip3 install face_recognition scikit-learn
-
-RUN apt-get install -y jhead
+RUN adduser --uid 1000 --group --system importer
 
 COPY entrypoint.sh .
 COPY recognition.py .
