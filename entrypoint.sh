@@ -39,9 +39,9 @@ process_image() {
     local tmp_path
     tmp_path="$TMPDIR/$(basename $path)"
 
-    jhead -autorot $tmp_path
-    python3 recognition.py $tmp_path | while read area; do
-        exiftool -regionlist+="$area" $tmp_path
+    jhead -autorot "$tmp_path"
+    python3 recognition.py "$tmp_path" | while read area; do
+        exiftool -regionlist+="$area" "$tmp_path"
     done
 
     # Fallback to GPSDateTime if DateTimeOriginal is not set
