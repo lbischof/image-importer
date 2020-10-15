@@ -50,7 +50,7 @@ jobs:
 
       - name: Docker Buildx (build)
         run: |
-          docker buildx build --output "type=image,push=false" ${{ steps.prepare.outputs.buildx_args }}
+          docker buildx build --pull --output "type=image,push=false" ${{ steps.prepare.outputs.buildx_args }}
       - name: Docker Login
         if: success()
         env:

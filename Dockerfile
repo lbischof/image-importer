@@ -7,8 +7,6 @@ RUN apt-get install -y --fix-missing \
     jhead \
     && apt-get clean && rm -rf /tmp/* /var/tmp/*
 
-RUN pip3 install face_recognition
-
 WORKDIR /app
 
 RUN adduser --uid 1000 --group --system importer
