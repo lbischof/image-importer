@@ -33,6 +33,9 @@ process_image() {
         exit 1
     fi
 
+    local directory
+    directory="$(basename "$(dirname "$path")")"
+
     # Copy the image in case something fails and the script exits
     # This ensures that the image is not left in a weird state
     cp "$path" "$TMPDIR"
@@ -40,9 +43,15 @@ process_image() {
     tmp_path="$TMPDIR/$(basename "$path")"
 
     jhead -autorot "$tmp_path"
+
+    exiftool -regionlist= "$tmp_path"
     python3 recognition.py "$tmp_path" | while read area; do
         exiftool -regionlist+="$area" "$tmp_path"
     done
+
+    if [[ $directory =~ ^[A-Z][a-z]+[[:space:]][A-Z][a-z]+$ ]]; then
+        exiftool "-artist=$directory" "$tmp_path"
+    fi
 
     # Fallback to GPSDateTime if DateTimeOriginal is not set
     # '-keywords<${directory;s#consume_test/##;$_ = undef if /^regex/}'
@@ -51,8 +60,7 @@ process_image() {
 
     # Fallback to GPSDateTime if DateTimeOriginal is not set
     # Set artist if the directory (without source) looks like a name. In my testing "undef" did not overwrite an already existing artist
-    exiftool '-Directory<GPSDateTime' '-Directory<DateTimeOriginal' \
-        "-artist<\${directory;s#${SOURCE%/}/?##;\$_=undef if not /^[A-Z][a-z]+ [A-Z][a-z]+$/}" \
+    exiftool '-Directory<DateTimeOriginal' \
         -d ${DESTINATION}/%Y -overwrite_original -r "${tmp_path}" || { rm "$tmp_path"; return 0; }
 
     echo "Successfully imported $path"

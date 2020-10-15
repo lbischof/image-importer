@@ -1,14 +1,15 @@
 import sys
-from PIL import Image, ImageDraw
+from PIL import Image
 import face_recognition
 from face_recognition.face_recognition_cli import image_files_in_folder, scan_known_people
 import numpy as np
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
-def test_image(image_to_check, known_faces, known_face_encodings, tolerance=0.6):
-        face_locations = face_recognition.face_locations(image_to_check)
-        face_encodings = face_recognition.face_encodings(image_to_check, face_locations)
+def test_image(image_to_check, known_names, known_face_encodings, tolerance=0.6):
+        unknown_image = face_recognition.load_image_file(image_to_check)
+        face_locations = face_recognition.face_locations(unknown_image)
+        face_encodings = face_recognition.face_encodings(unknown_image, face_locations)
         img = Image.open(image_to_check)
         width, height = img.size
 
@@ -19,7 +20,7 @@ def test_image(image_to_check, known_faces, known_face_encodings, tolerance=0.6)
             face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
             best_match_index = np.argmin(face_distances)
             if matches[best_match_index]:
-                name = known_face_names[best_match_index]
+                name = known_names[best_match_index]
             h = ((bottom-top))
             w = ((right-left))
             x = (w/2)+left
