@@ -1,4 +1,4 @@
-FROM lbischof/face_recognition
+FROM lbischof/face_recognition:latest
 
 RUN apt-get install -y --fix-missing \
     exiftool \
