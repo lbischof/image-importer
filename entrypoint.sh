@@ -44,7 +44,7 @@ process_image() {
 
     jhead -autorot "$tmp_path"
 
-    exiftool -use MWG -regionlist= "$tmp_path"
+    #exiftool -use MWG -regionlist= "$tmp_path"
     python3 recognition.py "$tmp_path" | while read area; do
         exiftool -use MWG -regionlist+="$area" "$tmp_path"
     done
