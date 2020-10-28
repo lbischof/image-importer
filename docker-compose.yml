@@ -1,0 +1,15 @@
+version: '2.4'
+
+services:
+    importer:
+        container_name: importer
+        build: .
+        restart: unless-stopped
+        volumes:
+            - ./src:/src
+            - ./dest:/dest
+            - ./known:/known
+        environment:
+            - TZ
+            - SOURCE=/src
+            - DESTINATION=/dest
